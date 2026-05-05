@@ -6,6 +6,7 @@ using UnityEngine;
 /// y se auto-configura con HealthSystem y ContactDamage.
 /// </summary>
 [RequireComponent(typeof(Rigidbody), typeof(HealthSystem), typeof(ContactDamage))]
+[RequireComponent(typeof(EffectReceiver))]
 public class EnemyController : MonoBehaviour
 {
     [SerializeField] private EnemyData enemyData;
@@ -14,6 +15,7 @@ public class EnemyController : MonoBehaviour
     private Rigidbody rb;
     private HealthSystem healthSystem;
     private ContactDamage contactDamage;
+    private EffectReceiver effectReceiver;
     private Transform target;
     private EnemySpawner spawner;
 
@@ -27,6 +29,7 @@ public class EnemyController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         healthSystem = GetComponent<HealthSystem>();
         contactDamage = GetComponent<ContactDamage>();
+        effectReceiver = GetComponent<EffectReceiver>();
         propertyBlock = new MaterialPropertyBlock();
 
         rb.freezeRotation = true;
@@ -44,6 +47,7 @@ public class EnemyController : MonoBehaviour
         spawner = ownerSpawner;
 
         healthSystem.SetMaxHealth(data.MaxHealth, healToNew: true);
+        effectReceiver?.ClearAllEffects();
 
         contactDamage.Configure(
             data.ContactDamage,
@@ -87,7 +91,11 @@ public class EnemyController : MonoBehaviour
         if (distance > enemyData.DetectionRange) return;
 
         Vector3 direction = toTarget / distance;
-        Vector3 desiredVelocity = direction * enemyData.MoveSpeed;
+        float speed = enemyData.MoveSpeed;
+        if (effectReceiver != null)
+            speed *= effectReceiver.SpeedMultiplier;
+
+        Vector3 desiredVelocity = direction * speed;
 
         Vector3 currentVel = rb.linearVelocity;
         Vector3 smoothed = Vector3.MoveTowards(

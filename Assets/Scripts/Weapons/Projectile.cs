@@ -88,7 +88,12 @@ public class Projectile : MonoBehaviour
         {
             target.TakeDamage(damage, elementData.DamageType, elementData);
 
-            // TODO: aplicar ElementEffects on-hit cuando exista el EffectSystem
+            if (elementData.OnHitEffects != null
+                && elementData.OnHitEffects.Length > 0
+                && other.TryGetComponent(out EffectReceiver receiver))
+            {
+                receiver.ApplyEffects(elementData.OnHitEffects);
+            }
         }
 
         SpawnImpactVfx();
