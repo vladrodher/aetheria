@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -18,6 +19,7 @@ public class WeaponController : MonoBehaviour
     private float nextFireTime;
 
     public ElementData CurrentElement => currentElement;
+    public event Action<ElementData> OnElementChanged;
 
     private void Awake()
     {
@@ -62,5 +64,6 @@ public class WeaponController : MonoBehaviour
     {
         currentElement = newElement;
         nextFireTime = 0f;
+        OnElementChanged?.Invoke(newElement);
     }
 }
