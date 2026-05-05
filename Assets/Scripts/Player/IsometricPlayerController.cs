@@ -56,6 +56,12 @@ public class IsometricPlayerController : MonoBehaviour
     public void SetMoveInput(Vector2 value) => moveInput = value;
     public void SetAimInput(Vector2 value) => aimInput = value;
 
+    /// <summary>
+    /// True cuando el joystick de apuntado tiene input. Usado por WeaponController
+    /// para disparar automáticamente mientras el jugador apunta (twin-stick).
+    /// </summary>
+    public bool IsAiming => aimInput.sqrMagnitude >= 0.01f;
+
     // ── Ciclo de juego ──────────────────────────────────────────────
 
     private void Update()
