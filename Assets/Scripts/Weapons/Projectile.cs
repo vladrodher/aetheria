@@ -94,6 +94,15 @@ public class Projectile : MonoBehaviour
             {
                 receiver.ApplyEffects(elementData.OnHitEffects);
             }
+
+            if (other.TryGetComponent(out ElementTracker tracker)
+                && ReactionManager.Instance != null)
+            {
+                other.TryGetComponent(out HealthSystem health);
+                other.TryGetComponent(out EffectReceiver effects);
+                ReactionManager.Instance.TryTriggerReaction(
+                    elementData, tracker, health, effects, transform.position);
+            }
         }
 
         SpawnImpactVfx();

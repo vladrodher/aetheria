@@ -6,7 +6,7 @@ using UnityEngine;
 /// y se auto-configura con HealthSystem y ContactDamage.
 /// </summary>
 [RequireComponent(typeof(Rigidbody), typeof(HealthSystem), typeof(ContactDamage))]
-[RequireComponent(typeof(EffectReceiver))]
+[RequireComponent(typeof(EffectReceiver), typeof(ElementTracker))]
 public class EnemyController : MonoBehaviour
 {
     [SerializeField] private EnemyData enemyData;
@@ -16,6 +16,7 @@ public class EnemyController : MonoBehaviour
     private HealthSystem healthSystem;
     private ContactDamage contactDamage;
     private EffectReceiver effectReceiver;
+    private ElementTracker elementTracker;
     private Transform target;
     private EnemySpawner spawner;
 
@@ -30,6 +31,7 @@ public class EnemyController : MonoBehaviour
         healthSystem = GetComponent<HealthSystem>();
         contactDamage = GetComponent<ContactDamage>();
         effectReceiver = GetComponent<EffectReceiver>();
+        elementTracker = GetComponent<ElementTracker>();
         propertyBlock = new MaterialPropertyBlock();
 
         rb.freezeRotation = true;
@@ -48,6 +50,7 @@ public class EnemyController : MonoBehaviour
 
         healthSystem.SetMaxHealth(data.MaxHealth, healToNew: true);
         effectReceiver?.ClearAllEffects();
+        elementTracker?.ClearAll();
 
         contactDamage.Configure(
             data.ContactDamage,
